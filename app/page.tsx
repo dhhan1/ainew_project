@@ -1,4 +1,5 @@
 import { NewsCard } from "@/components/news-card";
+import { CategoryBox } from "@/components/category-box";
 import { getDigest } from "@/services/news/aggregate";
 import { formatKst } from "@/lib/format";
 
@@ -6,6 +7,11 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const digest = await getDigest();
+
+  const totalCards = digest.groups.reduce(
+    (sum, g) => sum + g.clusters.length,
+    0,
+  );
 
   return (
     <main className="mx-auto max-w-5xl p-6">
@@ -19,14 +25,25 @@ export default async function Page() {
         </p>
       </header>
 
-      {digest.articles.length === 0 ? (
+      {totalCards === 0 ? (
         <p className="text-sm text-muted-foreground">
           최근 24시간 내 새 기사가 없습니다.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {digest.articles.map((article) => (
-            <NewsCard key={article.id} article={article} />
+        <div>
+          {digest.groups.map((group) => (
+            <CategoryBox
+              key={group.category}
+              category={group.category}
+              count={group.clusters.length}
+            >
+              {group.clusters.map((cluster) => (
+                <NewsCard
+                  key={cluster.representative.id}
+                  article={cluster.representative}
+                />
+              ))}
+            </CategoryBox>
           ))}
         </div>
       )}
