@@ -26,6 +26,12 @@ function singletonCluster(article: ArticleEnriched, score = 1): Cluster {
 }
 
 describe("NewsCard", () => {
+  it("wraps the card in a link to /news/[id]", () => {
+    render(<NewsCard cluster={singletonCluster(baseArticle)} />);
+    const link = screen.getByRole("link", { name: /OpenAI/ });
+    expect(link).toHaveAttribute("href", "/news/abc123");
+  });
+
   it("renders title, source label, and Korean summary", () => {
     render(<NewsCard cluster={singletonCluster(baseArticle)} />);
     expect(screen.getByText("OpenAI, GPT-5.4 정식 출시")).toBeInTheDocument();
