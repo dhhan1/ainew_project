@@ -105,16 +105,11 @@ describe("GET /api/cron/refresh", () => {
     expect(body.ok).toBe(false);
   });
 
-  it("accepts requests with x-vercel-cron-signature header (production cron)", async () => {
-    buildDigestMock.mockResolvedValue({
-      generatedAt: new Date().toISOString(),
-      groups: [],
-      failedSources: [],
-      mood: "calm",
-    });
+  it("rejects bearer with the same prefix but different suffix (timing-safe equal)", async () => {
+    // Bearer "test-secret" vs Bearer "test-secre1" — same length, different content
     const res = await GET(
-      makeRequest({ "x-vercel-cron-signature": "vercel-internal" }),
+      makeRequest({ authorization: "Bearer test-secre1" }),
     );
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(401);
   });
 });

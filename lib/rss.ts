@@ -26,11 +26,20 @@ function parseDate(value: string | undefined): string | null {
   return d.toISOString();
 }
 
-export async function fetchSource(source: SourceMeta): Promise<Article[]> {
+export interface FetchSourceResult {
+  articles: Article[];
+  failed: boolean;
+}
+
+export async function fetchSource(
+  source: SourceMeta,
+  parseUrlFn: (url: string) => ReturnType<typeof parser.parseURL> = (url) =>
+    parser.parseURL(url),
+): Promise<FetchSourceResult> {
   try {
-    const feed = await parser.parseURL(source.rssUrl);
+    const feed = await parseUrlFn(source.rssUrl);
     const items = feed.items ?? [];
-    return items
+    const articles = items
       .map((item) => {
         const url = item.link?.trim();
         const title = item.title?.trim();
@@ -49,10 +58,11 @@ export async function fetchSource(source: SourceMeta): Promise<Article[]> {
         return article;
       })
       .filter((a): a is Article => a !== null);
+    return { articles, failed: false };
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
     console.error(`[rss] fetch failed for ${source.id} (${source.rssUrl}): ${reason}`);
-    return [];
+    return { articles: [], failed: true };
   }
 }
 
@@ -61,13 +71,13 @@ export async function fetchAllSources(
 ): Promise<{ articles: Article[]; failedSources: string[] }> {
   const settled = await Promise.all(
     sources.map(async (source) => {
-      const articles = await fetchSource(source);
-      return { source, articles };
+      const result = await fetchSource(source);
+      return { source, ...result };
     }),
   );
   const articles = settled.flatMap((r) => r.articles);
   const failedSources = settled
-    .filter((r) => r.articles.length === 0)
+    .filter((r) => r.failed)
     .map((r) => r.source.id);
   return { articles, failedSources };
 }

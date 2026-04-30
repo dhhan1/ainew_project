@@ -1,18 +1,28 @@
 import { revalidateTag } from "next/cache";
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { buildDigest, NEWS_CACHE_TAG } from "@/services/news/aggregate";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+// Vercel Cron automatically sends `Authorization: Bearer ${CRON_SECRET}`
+// when CRON_SECRET is set as an environment variable. The same Bearer
+// also lets us trigger refreshes manually (curl -H "Authorization: ...").
+// So a single bearer check covers both production cron and manual.
 function isAuthorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
-  const auth = request.headers.get("authorization");
-  if (auth === `Bearer ${secret}`) return true;
-  // Vercel Cron sends a built-in header in production
-  const vercelHeader = request.headers.get("x-vercel-cron-signature");
-  return Boolean(vercelHeader);
+  const authHeader = request.headers.get("authorization") ?? "";
+  const expected = `Bearer ${secret}`;
+  const a = Buffer.from(authHeader);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  try {
+    return timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
 }
 
 export async function GET(request: Request) {

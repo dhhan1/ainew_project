@@ -52,11 +52,3 @@ export interface CategoryGroup {
 }
 
 export type Mood = "calm" | "normal" | "attention";
-
-export interface DigestData {
-  generatedAt: string;
-  groups: CategoryGroup[];
-  mood: Mood;
-  failedSources: string[];
-  totalCards: number;
-}

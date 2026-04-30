@@ -58,10 +58,16 @@ export async function buildDigest(): Promise<DigestSnapshot> {
     category: categoryMap.get(a.id) ?? "기타",
   }));
 
-  // Cluster within each category
+  // Cluster within each category. Sort by publishedAt desc first so greedy
+  // clustering is deterministic (most recent article is the seed).
   const allClusters: { category: Category; cluster: Cluster; rawScore: number }[] = [];
   for (const cat of CATEGORIES) {
-    const inCategory = categorized.filter((a) => a.category === cat);
+    const inCategory = categorized
+      .filter((a) => a.category === cat)
+      .sort(
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+      );
     const rawClusters = clusterArticles(inCategory);
     for (const rc of rawClusters) {
       const placeholderRep = pickRepresentative(rc.members, now);

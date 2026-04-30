@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { SourceBadge } from "@/components/source-badge";
 import { formatKst } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { FALLBACK_TEXT } from "@/services/summarize";
 
 export const dynamic = "force-dynamic";
 
@@ -67,7 +68,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
               : "bg-muted/50",
           )}
         >
-          {article.summaryKo || "요약을 가져오지 못했습니다."}
+          {article.summaryKo || FALLBACK_TEXT}
         </div>
       </section>
 
