@@ -1,15 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SourceBadge } from "@/components/source-badge";
 import { formatKst, formatRelativeKo } from "@/lib/format";
-import type { Article } from "@/types/news";
+import { cn } from "@/lib/utils";
+import type { ArticleEnriched } from "@/types/news";
 
 export interface NewsCardProps {
-  article: Article;
-  description?: string;
+  article: ArticleEnriched;
 }
 
-export function NewsCard({ article, description }: NewsCardProps) {
-  const summary = description ?? article.rawDescription ?? "";
+export function NewsCard({ article }: NewsCardProps) {
+  const failed = article.summaryStatus === "failed";
   return (
     <Card size="sm" className="hover:bg-muted/50 transition-colors">
       <CardHeader>
@@ -26,8 +26,18 @@ export function NewsCard({ article, description }: NewsCardProps) {
         <CardTitle className="line-clamp-2">{article.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        {summary ? (
-          <p className="text-sm text-muted-foreground line-clamp-2">{summary}</p>
+        {article.summaryKo ? (
+          <p
+            data-summary-status={article.summaryStatus}
+            className={cn(
+              "text-sm line-clamp-3",
+              failed
+                ? "italic text-muted-foreground bg-muted/50 px-2 py-1 rounded-md"
+                : "text-muted-foreground",
+            )}
+          >
+            {article.summaryKo}
+          </p>
         ) : null}
       </CardContent>
     </Card>
