@@ -9,9 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { SourceBadge } from "@/components/source-badge";
 import { formatKst } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { FALLBACK_TEXT } from "@/services/summarize";
 
-export const dynamic = "force-dynamic";
+const FALLBACK_TEXT = "요약을 가져오지 못했습니다.";
 
 interface DetailPageProps {
   params: Promise<{ id: string }>;
@@ -19,7 +18,7 @@ interface DetailPageProps {
 
 export default async function DetailPage({ params }: DetailPageProps) {
   const { id } = await params;
-  const digest = await getDigest();
+  const digest = getDigest();
   const found = findArticleById(digest, id);
   if (!found) notFound();
 

@@ -83,3 +83,31 @@ applied: not-yet
 **상황**: 로컬 dev 검증 시 사용자 네트워크가 Azure endpoint에 도달하지 못해 모든 summarize/categorize 호출이 timeout. 기본 timeout이 길어 페이지 렌더가 3분 이상 걸렸다(스펙은 통과 — fallback 경로가 정상 작동).
 **판단**: `AzureOpenAI` 클라이언트에 `timeout: 15000` + `maxRetries: 0` 명시. summarize 레이어의 자체 1회 재시도로 충분. 이렇게 하면 Azure가 죽어도 페이지가 합리적 시간 안에 fallback으로 떨어진다.
 **다시 마주칠 가능성**: 높음 — 외부 LLM API에 의존하는 모든 server-rendered 페이지에 동일 문제. 룰 후보지만 SDK별 세팅 키가 달라 일반화 어려움. 우선 learnings에만 메모.
+
+---
+category: refactor
+applied: rule
+---
+## 사내망/비용 제약 → 런타임 LLM 제거하고 정적 JSON + 백그라운드 routine 패턴
+
+**상황**: Azure OpenAI 셋업 후 (1) 사내망에서만 도달 가능 (2) Vercel 프로덕션에서도 사내 게이트웨이 비도달. Anthropic으로 마이그레이션 시도했으나 별도 결제 발생. 사용자가 "Claude Code 백그라운드 routine으로 옮겨도 되냐"고 물어 패턴 전환 결정.
+
+**판단**: 7 Tasks 분량 LLM 인프라(`services/{azure-openai,summarize,categorize}.ts`, `lib/{cluster,score,concurrency}.ts`, `app/api/cron/refresh/route.ts`, `vercel.json`, `unstable_cache` 래핑)를 모두 제거. 페이지는 `app/data/news.json`을 직접 import해 렌더링. 데이터 갱신은 별도 routine(`scripts/refresh-digest.md`)이 인-컨텍스트로 분류·클러스터링·한국어 요약을 수행해 commit·push.
+
+장점: Vercel 환경 변수 0개, `/`가 정적 prerender(0ms LLM 대기), 사내망 의존성 0, 비용 = 사용자 Claude Code 구독 토큰만.
+
+단점: 갱신 시 git push → Vercel rebuild 5~10분 지연. 매일 routine당 50k~80k 토큰 소모.
+
+**다시 마주칠 가능성**: 높음 — 사내망 폐쇄 + 외부 API 비용 부담 케이스는 흔하다. **즉시 승격**: `.claude/rules/runtime-llm-when.md`에 "런타임 LLM 호출 정당성 체크리스트" 룰로.
+
+---
+category: tooling
+applied: not-yet
+---
+## RSS feed 80건 컨텍스트 진입은 ~30k 토큰 — 사전 압축이 필요
+
+**상황**: 백그라운드 routine 첫 실행. `scripts/fetch-rss.ts` 출력이 92KB(=41k 토큰). Read 도구로 한 번에 못 읽음. Grep으로 id+title만 추출해 처리.
+
+**판단**: routine 실행 시 RSS 원본 전부를 컨텍스트에 올리지 않고 (1) title+source+publishedAt+id만 grep으로 추출한 인덱스 (2) 클러스터 후보 ID들에 한해 rawDescription을 -A 옵션으로 부분 조회. 토큰 ~10k까지 절감 가능.
+
+**다시 마주칠 가능성**: 중간 — daily routine마다 반복 발생. routine 사양서(`scripts/refresh-digest.md`)에 "큰 JSON은 grep 인덱스 → 선택적 -A로 본문 조회" 패턴을 명시했음.

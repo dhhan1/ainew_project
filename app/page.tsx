@@ -6,10 +6,8 @@ import { RefreshButton } from "@/components/refresh-button";
 import { getDigest } from "@/services/news/aggregate";
 import { formatKst } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
-
-export default async function Page() {
-  const digest = await getDigest();
+export default function Page() {
+  const digest = getDigest();
 
   const totalCards = digest.groups.reduce(
     (sum, g) => sum + g.clusters.length,

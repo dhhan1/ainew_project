@@ -1,0 +1,363 @@
+{
+  "generatedAt": "2026-04-30T04:30:00.000Z",
+  "mood": "attention",
+  "failedSources": [],
+  "groups": [
+    {
+      "category": "모델/기업",
+      "clusters": [
+        {
+          "score": 5.5,
+          "representative": {
+            "id": "7e785f7244d8",
+            "title": "허사비스 \"한국, 기술 진보 조건 다 갖춰…협업 확장할 것\"",
+            "url": "https://www.aitimes.com/news/articleView.html?idxno=209919",
+            "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-29T07:16:18.000Z",
+            "language": "ko",
+            "category": "모델/기업",
+            "summaryKo": "데미스 하사비스 구글 딥마인드 CEO가 'Google for Korea 2026'에서 한국이 인재·인프라·정부 의지를 모두 갖춘 보기 드문 시장이라고 평가하며 협업 확장 의지를 밝혔다. 알파고 이후 10년 만에 이세돌 9단과 재대담을 가졌고, 다음 의제로 '지능형 로봇'을 제시했다. 구글은 같은 행사에서 토익 모의고사 풀이를 제미나이에 통합하는 등 한국 시장 맞춤형 서비스를 잇달아 공개했다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "7e785f7244d8",
+              "title": "허사비스 \"한국, 기술 진보 조건 다 갖춰…협업 확장할 것\"",
+              "url": "https://www.aitimes.com/news/articleView.html?idxno=209919",
+              "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T07:16:18.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "데미스 하사비스 구글 딥마인드 CEO가 'Google for Korea 2026'에서 한국이 인재·인프라·정부 의지를 모두 갖춘 보기 드문 시장이라고 평가하며 협업 확장 의지를 밝혔다. 알파고 이후 10년 만에 이세돌 9단과 재대담을 가졌고, 다음 의제로 '지능형 로봇'을 제시했다. 구글은 같은 행사에서 토익 모의고사 풀이를 제미나이에 통합하는 등 한국 시장 맞춤형 서비스를 잇달아 공개했다.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "edb69d410d72",
+              "title": "AI 전문가들 '구글 포 코리아 2026' 모여 구글의 AI 성과 및 비전 공유",
+              "url": "https://www.aitimes.kr/news/articleView.html?idxno=39849",
+              "source": { "id": "aitimes-kr", "label": "AITimes KR", "rssUrl": "https://www.aitimes.kr/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T13:49:43.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "Google for Korea 2026 행사 종합 보도. 구글이 한국 시장 확대 전략과 AI 성과를 공유했다.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "c65dfeb4b16c",
+              "title": "알파고 10년 후, 구글이 한국에서 꺼낸 카드 '지능형 로봇'",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20619",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T08:17:47.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "알파고 10주년을 맞은 구글이 한국에서 차세대 의제로 지능형 로봇을 꺼냈다.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "a7767e7082e0",
+              "title": "다시 만난 37수와 78수, 하사비스·이세돌, 10년 만의 대담이 남긴 것",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20618",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T07:42:20.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "하사비스와 이세돌의 10년 만의 재대담. 알파고의 37수와 이세돌의 78수를 회고하며 AI와 인간의 관계를 재조명했다.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "da75d736fc01",
+              "title": "10년전 시작된 AI 혁명, 구글이 한국을 주목하는 이유",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20617",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T06:50:49.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "알파고 이후 10년이 흐른 지금, 구글이 한국을 핵심 협력 거점으로 다시 지목한 배경 분석.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 2.5,
+          "representative": {
+            "id": "0b3837a6f041",
+            "title": "GPT-5.5, OpenAI의 가장 강력한 에이전틱 AI 모델 출시",
+            "url": "https://www.artificialintelligence-news.com/news/gpt-5-5-is-openais-most-capable-agentic-ai-model-yet-at-twice-the-api-price/",
+            "source": { "id": "ai-news", "label": "AI News", "rssUrl": "https://www.artificialintelligence-news.com/feed/", "language": "en" },
+            "publishedAt": "2026-04-29T09:08:13.000Z",
+            "language": "en",
+            "category": "모델/기업",
+            "summaryKo": "OpenAI가 4월 23일 'real work를 위한 새로운 차원의 지능'으로 GPT-5.5를 공개했다. 단순 응답이 아니라 계획·도구 사용·자체 출력 검증·다단계 작업 수행을 위해 처음부터 설계된 에이전틱 모델이다. 동시에 아마존 베드록에서도 같은 모델을 즉시 서비스하기 시작했으며, 종래 대비 두 배의 API 가격이 책정됐다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "0b3837a6f041",
+              "title": "GPT-5.5, OpenAI의 가장 강력한 에이전틱 AI 모델 출시",
+              "url": "https://www.artificialintelligence-news.com/news/gpt-5-5-is-openais-most-capable-agentic-ai-model-yet-at-twice-the-api-price/",
+              "source": { "id": "ai-news", "label": "AI News", "rssUrl": "https://www.artificialintelligence-news.com/feed/", "language": "en" },
+              "publishedAt": "2026-04-29T09:08:13.000Z",
+              "language": "en",
+              "category": "모델/기업",
+              "summaryKo": "OpenAI가 GPT-5.5를 출시하며 에이전트 기능을 강조했다. API 가격은 두 배 인상.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "e724fe09500e",
+              "title": "아마존, 베드록에서 오픈AI 최신 모델 서비스 시작...생산성 제품군도 출시",
+              "url": "https://www.aitimes.com/news/articleView.html?idxno=209920",
+              "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T06:02:11.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "AWS Bedrock에 OpenAI 최신 모델이 등재됐다. 생산성 제품군도 함께 공개.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 2.4,
+          "representative": {
+            "id": "cb41a874bb4b",
+            "title": "엔비디아, 통합형 멀티모달 모델 '네모트론 3 나노 옴니' 공개...\"파편화된 AI는 끝\"",
+            "url": "https://www.aitimes.com/news/articleView.html?idxno=209895",
+            "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-29T08:09:49.000Z",
+            "language": "ko",
+            "category": "모델/기업",
+            "summaryKo": "엔비디아가 텍스트·이미지·오디오를 단일 모델에서 처리하는 멀티모달 LLM '네모트론 3 나노 옴니'를 공개했다. '파편화된 AI는 끝났다'는 슬로건과 함께 온디바이스 추론과 엔터프라이즈 임베디드 시나리오를 겨냥한다. 별도 비전·음성 모델을 합치지 않고도 동등한 성능을 낸다고 주장했다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "cb41a874bb4b",
+              "title": "엔비디아, 통합형 멀티모달 모델 '네모트론 3 나노 옴니' 공개...\"파편화된 AI는 끝\"",
+              "url": "https://www.aitimes.com/news/articleView.html?idxno=209895",
+              "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T08:09:49.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "엔비디아 통합 멀티모달 LLM 네모트론 3 나노 옴니 공개.",
+              "summaryStatus": "ok"
+            },
+            {
+              "id": "d15370c148c7",
+              "title": "엔비디아, 멀티모달 AI 모델 '네모트론 3 나노 옴니' 공개",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20616",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T06:54:08.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "엔비디아 네모트론 3 나노 옴니 공개 보도.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 1.49,
+          "representative": {
+            "id": "3d64ae11ae30",
+            "title": "삼성전자, 1분기 매출 133.9조·영업익 57.2조 '사상 최대'…AI 반도체가 실적 견인",
+            "url": "https://www.aitimes.kr/news/articleView.html?idxno=39853",
+            "source": { "id": "aitimes-kr", "label": "AITimes KR", "rssUrl": "https://www.aitimes.kr/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-30T01:17:15.000Z",
+            "language": "ko",
+            "category": "모델/기업",
+            "summaryKo": "삼성전자가 2026년 1분기 매출 133.9조 원, 영업이익 57.2조 원이라는 사상 최대 분기 실적을 발표했다. AI 가속기 수요 급증에 따른 HBM·고부가 메모리 출하가 핵심 동력이었다. 메모리·파운드리 양 축 모두에서 AI 인프라 확장이 직접 매출로 연결됐다는 점이 분명해졌다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "3d64ae11ae30",
+              "title": "삼성전자, 1분기 매출 133.9조·영업익 57.2조 '사상 최대'…AI 반도체가 실적 견인",
+              "url": "https://www.aitimes.kr/news/articleView.html?idxno=39853",
+              "source": { "id": "aitimes-kr", "label": "AITimes KR", "rssUrl": "https://www.aitimes.kr/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-30T01:17:15.000Z",
+              "language": "ko",
+              "category": "모델/기업",
+              "summaryKo": "삼성전자 1분기 매출 133.9조, 영업익 57.2조 사상 최대.",
+              "summaryStatus": "ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "응용",
+      "clusters": [
+        {
+          "score": 1.48,
+          "representative": {
+            "id": "fb649b8f2140",
+            "title": "국산 AI, 공공행정 파고든다… LG·네이버·업스테이지 각축",
+            "url": "http://www.newstheai.com/news/articleView.html?idxno=20622",
+            "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-30T02:56:14.000Z",
+            "language": "ko",
+            "category": "응용",
+            "summaryKo": "정부 공공행정 영역에서 국내 AI 기업의 경쟁이 본격화되고 있다. LG의 엑사원, 네이버 자체 LLM, 업스테이지가 안전 신고 처리·민원 자동화·문서 분석 등 사업을 두고 격전 중이다. 같은 날 LG-KETI는 엑사원으로 연 1천만 건의 안전 신고를 처리한다는 협력 사례를 별도로 발표했다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "fb649b8f2140",
+              "title": "국산 AI, 공공행정 파고든다… LG·네이버·업스테이지 각축",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20622",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-30T02:56:14.000Z",
+              "language": "ko",
+              "category": "응용",
+              "summaryKo": "공공행정 영역의 국내 AI 격전 구도 분석.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 1.47,
+          "representative": {
+            "id": "3b1002316561",
+            "title": "슬랙 '에이전트 OS' 선언… 韓 네이버웍스·카카오워크 전략은",
+            "url": "http://www.newstheai.com/news/articleView.html?idxno=20620",
+            "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-30T00:37:02.000Z",
+            "language": "ko",
+            "category": "응용",
+            "summaryKo": "Slack이 자사 협업 플랫폼을 'Agent OS'로 재정의하며, 채팅·문서·검색 위에 AI 에이전트를 결합하는 비전을 발표했다. 한국에서는 네이버웍스와 카카오워크가 같은 흐름에 어떻게 대응할지가 관전 포인트로 떠올랐다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "3b1002316561",
+              "title": "슬랙 '에이전트 OS' 선언… 韓 네이버웍스·카카오워크 전략은",
+              "url": "http://www.newstheai.com/news/articleView.html?idxno=20620",
+              "source": { "id": "newstheai", "label": "더에이아이", "rssUrl": "https://www.newstheai.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-30T00:37:02.000Z",
+              "language": "ko",
+              "category": "응용",
+              "summaryKo": "Slack의 Agent OS 선언과 한국 협업 도구의 대응 전략.",
+              "summaryStatus": "ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "연구",
+      "clusters": [
+        {
+          "score": 1.45,
+          "representative": {
+            "id": "ed1551533d25",
+            "title": "MIT-IBM 컴퓨팅 리서치 랩 출범 — AI와 양자컴퓨팅의 미래를 잇는다",
+            "url": "https://news.mit.edu/2026/mit-ibm-computing-research-lab-launches-0429",
+            "source": { "id": "mit-ai", "label": "MIT News", "rssUrl": "https://news.mit.edu/rss/topic/artificial-intelligence2", "language": "en" },
+            "publishedAt": "2026-04-29T10:00:00.000Z",
+            "language": "en",
+            "category": "연구",
+            "summaryKo": "MIT와 IBM이 장기 협력을 발전시켜 AI·알고리즘·양자컴퓨팅의 융합 지점을 연구할 합동 연구소 'MIT-IBM Computing Research Lab'을 정식 출범했다. 차세대 컴퓨팅 패러다임이 결합되는 영역에서 학계와 산업계의 공동 연구 의제를 설정한다는 목표다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "ed1551533d25",
+              "title": "MIT-IBM 컴퓨팅 리서치 랩 출범 — AI와 양자컴퓨팅의 미래를 잇는다",
+              "url": "https://news.mit.edu/2026/mit-ibm-computing-research-lab-launches-0429",
+              "source": { "id": "mit-ai", "label": "MIT News", "rssUrl": "https://news.mit.edu/rss/topic/artificial-intelligence2", "language": "en" },
+              "publishedAt": "2026-04-29T10:00:00.000Z",
+              "language": "en",
+              "category": "연구",
+              "summaryKo": "MIT-IBM AI·양자 융합 연구소 출범.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 1.43,
+          "representative": {
+            "id": "f29beec0fc79",
+            "title": "MIT, 'Whac-a-mole 딜레마'를 푸는 AI 비전 디바이어싱 기법 'WRING' 발표",
+            "url": "https://news.mit.edu/2026/smarter-way-to-debias-ai-vision-models-0429",
+            "source": { "id": "mit-ai", "label": "MIT News", "rssUrl": "https://news.mit.edu/rss/topic/artificial-intelligence2", "language": "en" },
+            "publishedAt": "2026-04-29T21:40:00.000Z",
+            "language": "en",
+            "category": "연구",
+            "summaryKo": "MIT 연구진이 기존 디바이어싱 기법이 한 편향을 고치면 다른 편향이 튀어나오는 '두더지 잡기' 함정을 회피하는 새 기법 'WRING'을 공개했다. 모델이 새로운 편향을 만들거나 기존 편향을 증폭시키지 않도록 학습 신호를 정밀하게 분리한다. 의료 영상 등 고위험 비전 모델 적용을 우선 고려한다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "f29beec0fc79",
+              "title": "MIT, 'Whac-a-mole 딜레마'를 푸는 AI 비전 디바이어싱 기법 'WRING' 발표",
+              "url": "https://news.mit.edu/2026/smarter-way-to-debias-ai-vision-models-0429",
+              "source": { "id": "mit-ai", "label": "MIT News", "rssUrl": "https://news.mit.edu/rss/topic/artificial-intelligence2", "language": "en" },
+              "publishedAt": "2026-04-29T21:40:00.000Z",
+              "language": "en",
+              "category": "연구",
+              "summaryKo": "MIT WRING — AI 비전 모델 디바이어싱 신기법.",
+              "summaryStatus": "ok"
+            }
+          ]
+        },
+        {
+          "score": 1.42,
+          "representative": {
+            "id": "1945fe01e67d",
+            "title": "\"새로 학습시켜도 기존 내용 안 잊는다\" GIST, 신규 AI 학습 기법 'FIRE' 개발",
+            "url": "https://www.aitimes.com/news/articleView.html?idxno=209918",
+            "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-29T06:55:29.000Z",
+            "language": "ko",
+            "category": "연구",
+            "summaryKo": "광주과학기술원(GIST)이 새 데이터를 학습하면서도 기존 지식을 망각하지 않는 지속학습 기법 'FIRE'를 개발했다. 신경망의 catastrophic forgetting 문제를 완화해, 한 번 학습한 모델을 재학습 없이 점진적으로 확장하는 길을 열었다는 평가다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "1945fe01e67d",
+              "title": "\"새로 학습시켜도 기존 내용 안 잊는다\" GIST, 신규 AI 학습 기법 'FIRE' 개발",
+              "url": "https://www.aitimes.com/news/articleView.html?idxno=209918",
+              "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T06:55:29.000Z",
+              "language": "ko",
+              "category": "연구",
+              "summaryKo": "GIST FIRE — 지속학습 시 기존 지식 보존 기법.",
+              "summaryStatus": "ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "규제·정책",
+      "clusters": [
+        {
+          "score": 1.44,
+          "representative": {
+            "id": "970e43077c5d",
+            "title": "머스크, 오픈AI 소송 첫날 '소셜 미디어 비방' 문제로 주의받아",
+            "url": "https://www.aitimes.com/news/articleView.html?idxno=209925",
+            "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+            "publishedAt": "2026-04-29T06:42:16.000Z",
+            "language": "ko",
+            "category": "규제·정책",
+            "summaryKo": "일론 머스크가 OpenAI를 상대로 제기한 소송의 첫 공판이 열렸다. 재판부는 머스크의 소셜 미디어 발언이 비방성에 가깝다고 지적하며 양측에 자제를 요구했다. 본격 사실심리 전 단계지만, 양측 공방의 공식 톤이 정해지는 기점이 될 전망이다.",
+            "summaryStatus": "ok"
+          },
+          "members": [
+            {
+              "id": "970e43077c5d",
+              "title": "머스크, 오픈AI 소송 첫날 '소셜 미디어 비방' 문제로 주의받아",
+              "url": "https://www.aitimes.com/news/articleView.html?idxno=209925",
+              "source": { "id": "aitimes", "label": "AI타임스", "rssUrl": "https://www.aitimes.com/rss/allArticle.xml", "language": "ko" },
+              "publishedAt": "2026-04-29T06:42:16.000Z",
+              "language": "ko",
+              "category": "규제·정책",
+              "summaryKo": "머스크 vs OpenAI 소송 첫날, 비방성 SNS 발언으로 주의 받음.",
+              "summaryStatus": "ok"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

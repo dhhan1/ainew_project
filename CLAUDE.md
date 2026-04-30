@@ -48,6 +48,7 @@ Ideate → Define → Sketch → Plan → Build → Compound
 
 - **Next.js 16 `revalidateTag(tag, profile)`** — 두 번째 인자 `profile`이 필수 (Next.js 14/15에서 단일 인자였음). 즉시 만료를 원하면 `revalidateTag(tag, { expire: 0 })`. tag 명을 잊어 빌드 깨지면 이 룰을 떠올린다.
 - **시크릿/Bearer 비교** — `.claude/rules/secure-bearer-compare.md` 참조. timing-safe equal 강제.
+- **런타임 LLM 호출 자체 의문** — 페이지에서 LLM API를 부르기 전에 `.claude/rules/runtime-llm-when.md` 체크리스트 확인. 정적 JSON + 백그라운드 routine 패턴이 더 나은 케이스 많다.
 
 ## Architecture
 

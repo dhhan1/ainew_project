@@ -1,11 +1,11 @@
 # AI News Trend 비서
 
-매일 아침 06:00 KST에 AI 뉴스를 자동으로 모으고 한국어로 요약해 단일 페이지에서 보여주는 비서.
+매일 아침 AI 뉴스를 모아 한국어로 요약해 단일 페이지로 보여주는 비서.
 
 - 6개 RSS 소스(EN/KR 혼합) 종합
 - 24h 내 발행 기사를 교차 출처 클러스터링 + 점수화 → Top 10 선정
 - 5개 카테고리(모델/기업·연구·규제·정책·응용·기타) 박스 그룹핑
-- Azure OpenAI(gpt-5.4)로 한국어 요약 (1회 재시도 + fallback)
+- **백그라운드 routine이 한국어 요약 + 분류 + 클러스터링을 수행**해 `app/data/news.json`에 commit·push (런타임 LLM API 호출 없음)
 - 그날의 분위기 배지 (🌿 평온 / ☀️ 보통 / 🔥 주목)
 - 다크 모드 토글, 카드 → 상세 페이지(`/news/[id]`) + 원문 외부 링크 + 관련 기사
 
@@ -14,20 +14,32 @@
 - **Framework**: Next.js 16 (App Router, RSC)
 - **UI**: React 19, Tailwind CSS 4, shadcn/ui, Lucide
 - **Theme**: next-themes (`attribute="class"`, light 기본)
-- **LLM**: Azure OpenAI (`gpt-5.4` chat / `text-embedding-3-large` embedding)
-- **RSS**: rss-parser
-- **Cache**: Next.js `unstable_cache` + tag-based invalidation
-- **Schedule**: Vercel Cron (06:00 KST = `0 21 * * *` UTC)
+- **RSS**: rss-parser (refresh 스크립트에서만 사용)
 - **Test**: Vitest (단위), Playwright (E2E)
 - **PM**: Bun
+
+## 데이터 흐름
+
+```
+[Daily routine — Claude Code background]
+  scripts/fetch-rss.ts → 6개 RSS 24h 필터
+  → 인-컨텍스트 분류·클러스터링·한국어 요약
+  → app/data/news.json 갱신
+  → git commit + push
+  → Vercel 자동 재배포
+
+[Webapp]
+  app/page.tsx: import news.json (build-time 고정)
+  app/news/[id]/page.tsx: 같은 json에서 lookup
+```
+
+자세한 routine 사양은 `scripts/refresh-digest.md` 참고.
 
 ## 시작하기
 
 ```bash
 bun install
-cp .env.local.example .env.local
-# .env.local 파일에 Azure OpenAI 키들과 CRON_SECRET을 채워 넣는다
-bun dev
+bun dev   # 0.0.0.0:3000 (LAN 접근 가능)
 ```
 
 http://localhost:3000
@@ -40,65 +52,50 @@ bunx playwright install chromium
 
 ## 환경 변수
 
-| 키 | 필수 | 예시 / 비고 |
-|---|---|---|
-| `AZURE_API_KEY` | ✓ | Azure OpenAI 리소스 키 |
-| `AZURE_ENDPOINT` | ✓ | `https://<리소스명>.openai.azure.com/` |
-| `AZURE_DEPLOYMENT_NAME` | ✓ | 요약용 chat deployment 이름. 본 프로젝트는 `gpt-5.4` |
-| `AZURE_API_VERSION` | ✓ | `2024-12-01-preview` |
-| `AZURE_EMBEDDING_DEPLOYMENT` | – | `text-embedding-3-large` (현재 미사용, 추후 클러스터 고도화용) |
-| `CRON_SECRET` | ✓ | `/api/cron/refresh` 호출 토큰. 임의의 강한 문자열 |
-
-`NEXT_PUBLIC_` 접두사 절대 금지 — 모든 키는 서버 전용.
+**런타임 환경 변수 없음** (LLM API 호출이 없으므로). Vercel 배포 시에도 추가 env 등록 불필요.
 
 ## 스크립트
 
 | 명령어 | 설명 |
 |---|---|
-| `bun dev` | 개발 서버 실행 |
+| `bun dev` | 개발 서버 (0.0.0.0 바인딩, LAN 접근 가능) |
 | `bun run build` | 프로덕션 빌드 |
-| `bun start` | 프로덕션 서버 실행 |
-| `bun run lint` | ESLint 실행 |
-| `bun run test` | Vitest 실행 |
-| `bun run test:watch` | Vitest 워치 모드 |
-| `bun run test:e2e` | Playwright E2E 실행 |
+| `bun start` | 프로덕션 서버 |
+| `bun run lint` | ESLint |
+| `bun run test` | Vitest |
+| `bun run test:watch` | Vitest watch |
+| `bun run test:e2e` | Playwright E2E |
+| `bun scripts/fetch-rss.ts` | RSS 수집 → stdout JSON (수동 갱신 시작점) |
 
-## 수동 갱신 (로컬)
+## 수동 갱신
 
 ```bash
-curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/refresh
+bun scripts/fetch-rss.ts > /tmp/rss-recent.json
+# 별도 도구로 분류·클러스터링·요약 후 app/data/news.json 작성
+git add app/data/news.json
+git commit -m "chore(digest): refresh $(date +%Y-%m-%d)"
+git push
 ```
 
-응답:
-
-```json
-{ "ok": true, "refreshed": true, "generatedAt": "...", "mood": "normal", "totalCards": 10, "failedSources": [] }
-```
-
-`refreshed: false`이면 새 결과가 0건이라 캐시를 비우지 않은 상태(직전 데이터를 계속 노출).
+또는 Claude Code 세션에서 `scripts/refresh-digest.md` 사양 그대로 작업을 위임.
 
 ## Vercel 배포
 
-1. **새 프로젝트** 임포트 — GitHub 저장소 연결.
-2. **Environment Variables** 섹션에서 위 6개 키 등록 (또는 `Import .env`).
-3. Deploy.
-4. Vercel 대시보드 → Project → **Cron Jobs** 탭에서 `0 21 * * *` 등록 확인.
+1. 새 프로젝트 임포트 (GitHub 저장소 연결)
+2. **Environment Variables 등록 불필요**
+3. Deploy
+
+`app/data/news.json`을 push할 때마다 자동 재배포됩니다.
 
 ## 아키텍처 / 의존성 순서
 
 `types/` → `config/` → `lib/` → `services/` → `hooks/` → `components/` → `app/`
 
-역방향 의존 금지. 순환 방지 규칙은 `CLAUDE.md`에 있습니다.
+역방향 의존 금지. 순환 방지 규칙은 `CLAUDE.md`.
 
 ## SDD 산출물
 
-본 feature(`ai-news-digest`)는 SDD 6단계 사이클로 만들어졌습니다.
-
 - `artifacts/ai-news-digest/spec.md` — 9개 시나리오 + 5개 불변 규칙
-- `artifacts/ai-news-digest/wireframe.html` — 홈/상세 와이어프레임 (4 mood 시나리오 + 다크 모드)
-- `artifacts/ai-news-digest/plan.md` — 7 Tasks + 3 Checkpoint
-- `artifacts/ai-news-digest/learnings.md` — Build 중 학습 누적
-
-## 라이선스
-
-MIT (또는 프로젝트 정책에 따름)
+- `artifacts/ai-news-digest/wireframe.html` — 홈/상세 와이어프레임
+- `artifacts/ai-news-digest/plan.md` — 7 Tasks (현재 정적 JSON 패턴으로 단순화됨)
+- `artifacts/ai-news-digest/learnings.md` — Build·refactor 학습 누적
