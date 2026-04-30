@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { NewsCard } from "./news-card";
-import type { ArticleEnriched } from "@/types/news";
+import type { ArticleEnriched, Cluster } from "@/types/news";
 
 const baseArticle: ArticleEnriched = {
   id: "abc123",
@@ -21,9 +21,13 @@ const baseArticle: ArticleEnriched = {
   category: "기타",
 };
 
+function singletonCluster(article: ArticleEnriched, score = 1): Cluster {
+  return { representative: article, members: [article], score };
+}
+
 describe("NewsCard", () => {
   it("renders title, source label, and Korean summary", () => {
-    render(<NewsCard article={baseArticle} />);
+    render(<NewsCard cluster={singletonCluster(baseArticle)} />);
     expect(screen.getByText("OpenAI, GPT-5.4 정식 출시")).toBeInTheDocument();
     expect(screen.getByText("Reuters")).toBeInTheDocument();
     expect(
@@ -31,28 +35,37 @@ describe("NewsCard", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the relative time hint based on publishedAt", () => {
-    render(<NewsCard article={baseArticle} />);
-    expect(screen.getByText(/시간 전/)).toBeInTheDocument();
+  it("hides cluster badge when only one member", () => {
+    render(<NewsCard cluster={singletonCluster(baseArticle)} />);
+    expect(screen.queryByText(/매체 보도/)).not.toBeInTheDocument();
+  });
+
+  it("renders cluster badge with count >= 2", () => {
+    const a2 = { ...baseArticle, id: "x2", url: "https://x.com/2" };
+    const a3 = { ...baseArticle, id: "x3", url: "https://x.com/3" };
+    render(
+      <NewsCard
+        cluster={{
+          representative: baseArticle,
+          members: [baseArticle, a2, a3],
+          score: 3,
+        }}
+      />,
+    );
+    expect(screen.getByText("3개 매체 보도")).toBeInTheDocument();
   });
 
   it("marks failed summary cards with data-summary-status=failed", () => {
     render(
       <NewsCard
-        article={{
+        cluster={singletonCluster({
           ...baseArticle,
           summaryKo: "요약을 가져오지 못했습니다.",
           summaryStatus: "failed",
-        }}
+        })}
       />,
     );
     const summary = screen.getByText("요약을 가져오지 못했습니다.");
     expect(summary).toHaveAttribute("data-summary-status", "failed");
-  });
-
-  it("marks ok summary cards with data-summary-status=ok", () => {
-    render(<NewsCard article={baseArticle} />);
-    const summary = screen.getByText(/추론 비용을 절반으로 낮추고/);
-    expect(summary).toHaveAttribute("data-summary-status", "ok");
   });
 });

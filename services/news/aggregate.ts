@@ -4,14 +4,19 @@ import type {
   Category,
   CategoryGroup,
   Cluster,
+  SummaryStatus,
 } from "@/types/news";
 import { fetchAllSources } from "@/lib/rss";
 import { score } from "@/lib/score";
 import { mapWithConcurrency } from "@/lib/concurrency";
+import { clusterArticles } from "@/lib/cluster";
 import { RECENCY_WINDOW_HOURS, SOURCES, TOP_N } from "@/config/sources";
 import { CATEGORIES } from "@/types/news";
 import { summarizeKo } from "@/services/summarize";
 import { categorizeArticles } from "@/services/categorize";
+
+const MAX_CATEGORIZE_INPUT = 60; // cap LLM input cost on busy days
+const SUMMARY_CONCURRENCY = 3;
 
 export interface DigestSnapshot {
   generatedAt: string;
@@ -19,7 +24,9 @@ export interface DigestSnapshot {
   failedSources: string[];
 }
 
-const SUMMARY_CONCURRENCY = 3;
+interface InternalArticle extends Article {
+  category: Category;
+}
 
 export async function getDigest(): Promise<DigestSnapshot> {
   const now = new Date();
@@ -31,32 +38,75 @@ export async function getDigest(): Promise<DigestSnapshot> {
     (a) => new Date(a.publishedAt).getTime() >= cutoff,
   );
 
-  const topRaw = [...recent]
+  // Cap categorize input to most recent N (token cost control)
+  const candidates = [...recent]
     .sort(
       (a, b) =>
-        score({ publishedAt: b.publishedAt, now }) -
-        score({ publishedAt: a.publishedAt, now }),
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     )
-    .slice(0, TOP_N);
+    .slice(0, MAX_CATEGORIZE_INPUT);
 
-  // Summarize in parallel (limited concurrency)
-  const summarized = await mapWithConcurrency(
-    topRaw,
-    SUMMARY_CONCURRENCY,
-    async (article: Article) => {
-      const summary = await summarizeKo(article);
-      return { ...article, summaryKo: summary.text, summaryStatus: summary.status };
-    },
-  );
-
-  // Categorize in one batch call
-  const categoryMap = await categorizeArticles(summarized);
-  const enriched: ArticleEnriched[] = summarized.map((a) => ({
+  const categoryMap = await categorizeArticles(candidates);
+  const categorized: InternalArticle[] = candidates.map((a) => ({
     ...a,
     category: categoryMap.get(a.id) ?? "기타",
   }));
 
-  const groups = buildGroups(enriched, now);
+  // Cluster within each category
+  const allClusters: { category: Category; cluster: Cluster; rawScore: number }[] = [];
+  for (const cat of CATEGORIES) {
+    const inCategory = categorized.filter((a) => a.category === cat);
+    const rawClusters = clusterArticles(inCategory);
+    for (const rc of rawClusters) {
+      const placeholderRep = pickRepresentative(rc.members, now);
+      const cluster: Cluster = {
+        representative: toEnrichedPlaceholder(placeholderRep, cat),
+        members: rc.members.map((m) => toEnrichedPlaceholder(m, cat)),
+        score: clusterScore(rc.members, now),
+      };
+      allClusters.push({ category: cat, cluster, rawScore: cluster.score });
+    }
+  }
+
+  // Pick top N clusters globally by score
+  allClusters.sort((a, b) => b.rawScore - a.rawScore);
+  const top = allClusters.slice(0, TOP_N);
+
+  // Summarize the representatives only
+  const summarizedReps = await mapWithConcurrency(
+    top,
+    SUMMARY_CONCURRENCY,
+    async ({ cluster }) => {
+      const result = await summarizeKo(cluster.representative);
+      const updatedRep: ArticleEnriched = {
+        ...cluster.representative,
+        summaryKo: result.text,
+        summaryStatus: result.status,
+      };
+      return { ...cluster, representative: updatedRep };
+    },
+  );
+
+  // Group top clusters by category
+  const byCategory = new Map<Category, Cluster[]>();
+  for (let i = 0; i < top.length; i++) {
+    const item = top[i];
+    const refreshed = summarizedReps[i];
+    const list = byCategory.get(item.category) ?? [];
+    list.push(refreshed);
+    byCategory.set(item.category, list);
+  }
+
+  const groups: CategoryGroup[] = [];
+  for (const cat of CATEGORIES) {
+    const clusters = byCategory.get(cat);
+    if (!clusters || clusters.length === 0) continue;
+    clusters.sort((a, b) => b.score - a.score);
+    groups.push({ category: cat, clusters });
+  }
+  groups.sort(
+    (a, b) => (b.clusters[0]?.score ?? 0) - (a.clusters[0]?.score ?? 0),
+  );
 
   return {
     generatedAt: now.toISOString(),
@@ -65,35 +115,28 @@ export async function getDigest(): Promise<DigestSnapshot> {
   };
 }
 
-function buildGroups(articles: ArticleEnriched[], now: Date): CategoryGroup[] {
-  // Build single-member clusters per article (Task 4 will produce real clusters)
-  const byCategory = new Map<Category, Cluster[]>();
-  for (const a of articles) {
-    const cluster: Cluster = {
-      representative: a,
-      members: [a],
-      score: score({ publishedAt: a.publishedAt, clusterSize: 1, now }),
-    };
-    const list = byCategory.get(a.category) ?? [];
-    list.push(cluster);
-    byCategory.set(a.category, list);
-  }
+function pickRepresentative<T extends Article>(members: T[], now: Date): T {
+  return [...members].sort((a, b) => {
+    const sa = score({ publishedAt: a.publishedAt, now });
+    const sb = score({ publishedAt: b.publishedAt, now });
+    return sb - sa;
+  })[0];
+}
 
-  // Sort clusters within each category by score desc, then build groups in
-  // canonical category order, filtering empties
-  const groups: CategoryGroup[] = [];
-  for (const cat of CATEGORIES) {
-    const clusters = byCategory.get(cat);
-    if (!clusters || clusters.length === 0) continue;
-    clusters.sort((a, b) => b.score - a.score);
-    groups.push({ category: cat, clusters });
-  }
+function clusterScore(members: Article[], now: Date): number {
+  // Use the representative's recency × cluster size
+  const rep = pickRepresentative(members, now);
+  return score({ publishedAt: rep.publishedAt, clusterSize: members.length, now });
+}
 
-  // Reorder groups by their top cluster score desc (so important categories
-  // surface first regardless of canonical order)
-  groups.sort((a, b) => (b.clusters[0]?.score ?? 0) - (a.clusters[0]?.score ?? 0));
-
-  return groups;
+function toEnrichedPlaceholder(article: Article, category: Category): ArticleEnriched {
+  const status: SummaryStatus = article.rawDescription ? "ok" : "failed";
+  return {
+    ...article,
+    category,
+    summaryKo: article.rawDescription ?? "",
+    summaryStatus: status,
+  };
 }
 
 export function findArticleById(

@@ -1,14 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SourceBadge } from "@/components/source-badge";
+import { ClusterBadge } from "@/components/cluster-badge";
 import { formatKst, formatRelativeKo } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { ArticleEnriched } from "@/types/news";
+import type { Cluster } from "@/types/news";
 
 export interface NewsCardProps {
-  article: ArticleEnriched;
+  cluster: Cluster;
 }
 
-export function NewsCard({ article }: NewsCardProps) {
+export function NewsCard({ cluster }: NewsCardProps) {
+  const article = cluster.representative;
   const failed = article.summaryStatus === "failed";
   return (
     <Card size="sm" className="hover:bg-muted/50 transition-colors">
@@ -25,7 +27,7 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
         <CardTitle className="line-clamp-2">{article.title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-2">
         {article.summaryKo ? (
           <p
             data-summary-status={article.summaryStatus}
@@ -38,6 +40,11 @@ export function NewsCard({ article }: NewsCardProps) {
           >
             {article.summaryKo}
           </p>
+        ) : null}
+        {cluster.members.length >= 2 ? (
+          <div>
+            <ClusterBadge count={cluster.members.length} />
+          </div>
         ) : null}
       </CardContent>
     </Card>

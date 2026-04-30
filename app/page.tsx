@@ -40,7 +40,7 @@ export default async function Page() {
               {group.clusters.map((cluster) => (
                 <NewsCard
                   key={cluster.representative.id}
-                  article={cluster.representative}
+                  cluster={cluster}
                 />
               ))}
             </CategoryBox>
