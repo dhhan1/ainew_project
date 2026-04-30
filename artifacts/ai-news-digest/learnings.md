@@ -16,7 +16,7 @@ applied: not-yet
 
 ---
 category: tooling
-applied: not-yet
+applied: rule
 ---
 ## Next.js 16의 `revalidateTag`는 두 번째 인자 `profile`이 필수
 

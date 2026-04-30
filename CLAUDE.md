@@ -44,6 +44,11 @@ Ideate → Define → Sketch → Plan → Build → Compound
 | `bun run test:watch` | Vitest watch |
 | `bun run test:e2e` | Playwright |
 
+## Stack 메모
+
+- **Next.js 16 `revalidateTag(tag, profile)`** — 두 번째 인자 `profile`이 필수 (Next.js 14/15에서 단일 인자였음). 즉시 만료를 원하면 `revalidateTag(tag, { expire: 0 })`. tag 명을 잊어 빌드 깨지면 이 룰을 떠올린다.
+- **시크릿/Bearer 비교** — `.claude/rules/secure-bearer-compare.md` 참조. timing-safe equal 강제.
+
 ## Architecture
 
 순환 의존 방지를 위해 역방향 의존은 금지한다. 의존성이 적은 것부터 구현한다.
