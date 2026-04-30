@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe: ai-news-digest</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --w-bg: #f5f5f5;
+    --w-border: #ccc;
+    --w-text: #555;
+    --w-muted: #aaa;
+    --w-fill: #eee;
+  }
+  /* 5개 변수만 사용 — dark theme은 같은 변수 값을 재정의 */
+  [data-theme="dark"] {
+    --w-bg: #1a1a1a;
+    --w-border: #444;
+    --w-text: #ddd;
+    --w-muted: #888;
+    --w-fill: #2a2a2a;
+  }
+
+  * {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--w-text);
+  }
+
+  body { background: var(--w-bg); transition: background 0.15s; }
+
+  /* Screen nav */
+  nav { position: sticky; top: 0; z-index: 40; background: var(--w-bg); border-bottom: 1px solid var(--w-border); }
+  nav button { cursor: pointer; font-size: 13px; }
+  nav button:hover { background: var(--w-fill); border-radius: 4px; }
+  nav button.active { font-weight: bold; border-bottom: 2px solid var(--w-text); }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Viewport toggle */
+  .vp-toggle button {
+    font-size: 12px; padding: 2px 8px;
+    border: 1px solid var(--w-border); cursor: pointer; background: var(--w-bg);
+  }
+  .vp-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .vp-toggle button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .vp-toggle button.active { background: var(--w-text); color: var(--w-bg); }
+
+  /* Mobile viewport frame */
+  body.viewport-mobile .screen-content {
+    max-width: 375px !important;
+    margin: 24px auto !important;
+    border: 2px solid var(--w-border);
+    border-radius: 24px;
+    min-height: 667px;
+    background: var(--w-bg);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 16px !important;
+  }
+
+  /* Screen Notes (yellow background — wireframe artifact, not part of feature) */
+  .screen-notes {
+    background: #fffde7;
+    border-left: 3px solid #ffd54f;
+    padding: 12px 16px;
+    margin-top: 24px;
+    font-size: 13px;
+    border-radius: 0 4px 4px 0;
+  }
+  [data-theme="dark"] .screen-notes { background: #2a2a1a; }
+  .screen-notes summary { cursor: pointer; font-weight: bold; font-size: 12px; color: #b0a050; text-transform: uppercase; letter-spacing: 0.05em; }
+  .screen-notes p { margin: 6px 0 2px; color: #888; }
+  .screen-notes ul { margin: 4px 0 0 16px; padding: 0; color: #888; }
+  .screen-notes li { margin: 2px 0; }
+
+  /* feature-specific helpers (w- prefix) */
+  .w-card {
+    border: 1px solid var(--w-border);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--w-bg);
+    cursor: pointer;
+  }
+  .w-card:hover { background: var(--w-fill); }
+  .w-cat-box {
+    border: 1px dashed var(--w-border);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--w-fill);
+  }
+  .w-cat-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 10px;
+    border: 1px solid var(--w-border);
+    background: var(--w-bg);
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+  }
+  .w-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 8px;
+    border: 1px solid var(--w-border);
+    border-radius: 999px;
+    background: var(--w-fill);
+    color: var(--w-text);
+  }
+  .w-source-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 1px solid var(--w-border);
+    background: var(--w-bg);
+    color: var(--w-text);
+  }
+  .w-mood {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    padding: 3px 10px;
+    border: 1px solid var(--w-border);
+    border-radius: 999px;
+    background: var(--w-fill);
+    font-weight: normal;
+  }
+  .w-fallback-summary {
+    font-style: italic;
+    color: var(--w-muted);
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--w-fill) 4px, var(--w-fill) 8px);
+    padding: 4px 6px;
+    border-radius: 4px;
+  }
+  .w-icon-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--w-border);
+    background: var(--w-bg);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .w-icon-btn:hover { background: var(--w-fill); }
+
+  /* hide scenario blocks by default; activated via .active */
+  [data-scenario] { display: none; }
+  [data-scenario].active { display: block; }
+
+  /* scenario tab */
+  .scn-tabs button {
+    font-size: 11px; padding: 2px 8px;
+    border: 1px solid var(--w-border); background: var(--w-bg); cursor: pointer; color: var(--w-text);
+  }
+  .scn-tabs button.active { background: var(--w-text); color: var(--w-bg); }
+</style>
+</head>
+<body class="p-0 m-0 viewport-mobile">
+
+<nav class="flex items-center gap-4 px-6 py-2">
+  <span class="text-xs" style="color:var(--w-muted)">wireframe</span>
+  <button id="nav-0" onclick="show(0)" class="px-2 py-1">홈 (Top 10)</button>
+  <button id="nav-1" onclick="show(1)" class="px-2 py-1">기사 상세</button>
+  <div class="vp-toggle flex ml-auto">
+    <button id="vp-desktop" onclick="setViewport('desktop')">Desktop</button>
+    <button id="vp-mobile" onclick="setViewport('mobile')" class="active">Mobile</button>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- SCREEN 0: 홈 ( / )                                           -->
+<!-- ============================================================ -->
+<div id="screen-0" class="screen">
+  <div class="screen-content @container max-w-5xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      홈 — 오늘의 AI 뉴스 Top
+    </h2>
+
+    <!-- 시나리오 토글 (mood와 데이터 변형 결합) -->
+    <div class="scn-tabs flex flex-wrap gap-1 mb-4">
+      <button onclick="setScenario(0,'scenario-attention')" class="active">🔥 주목 (10건, 클러스터 3매체)</button>
+      <button onclick="setScenario(0,'scenario-fallback')">🔥 + 요약 fallback</button>
+      <button onclick="setScenario(0,'scenario-normal')">☀️ 보통 (8건, 큰 클러스터 없음)</button>
+      <button onclick="setScenario(0,'scenario-calm')">🌿 평온 (4건)</button>
+    </div>
+
+    <!-- ── 페이지 헤더 (scenario-independent) ───────────── -->
+    <header class="mb-4 flex items-start justify-between gap-3">
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xl font-bold" style="color:var(--w-text)">AI News Trend</span>
+          <!-- 분위기 배지 — JS가 시나리오에 맞춰 업데이트 -->
+          <span id="mood-badge" class="w-mood">🔥 주목 필요한 날</span>
+        </div>
+        <div class="text-xs mt-1" style="color:var(--w-muted)">
+          매일 06:00 KST 자동 갱신 · 5~6개 RSS 소스 종합
+        </div>
+        <div class="text-xs mt-1">
+          <i data-lucide="clock" class="inline-block w-3 h-3 align-text-bottom"></i>
+          마지막 갱신: 2026-04-30 06:00 KST
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 items-end">
+        <button class="w-icon-btn" onclick="toggleTheme()" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환" style="padding:6px;">
+          <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+        </button>
+        <button class="w-icon-btn" title="페이지 새로고침">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>새로고침</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================================== -->
+    <!-- scenario-attention: 10건, cluster≥3            -->
+    <!-- ============================================== -->
+    <div data-scenario="scenario-attention" class="active">
+
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">모델/기업</span>
+          <span class="text-xs" style="color:var(--w-muted)">3건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">Reuters</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">2시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">OpenAI, GPT-5.4 정식 출시 — 추론 비용 절반으로</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              새 모델은 기존 대비 추론 비용을 약 50% 절감하면서 컨텍스트는 1M 토큰까지 확장됐다…
+            </p>
+            <div class="mt-2"><span class="w-badge"><i data-lucide="users" class="inline-block w-2.5 h-2.5"></i> 3개 매체 보도</span></div>
+          </article>
+
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">VentureBeat</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">5시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">Anthropic, 엔터프라이즈향 Claude 4.7 발표</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              200만 토큰 컨텍스트와 멀티 에이전트 오케스트레이션을 강조한 신모델…
+            </p>
+            <div class="mt-2"><span class="w-badge">2개 매체 보도</span></div>
+          </article>
+
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">8시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">네이버, 자체 LLM 4세대 베타 공개</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              한국어 지표에서 GPT-4.5 대비 우위를 주장한 자체 평가 결과…
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">연구</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">MIT News</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">10시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">MIT, 1B 파라미터로 GPT-4 수준 성능 달성한 새 학습법</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              데이터 큐레이션과 커리큘럼 학습을 결합한 방식으로 효율을 극대화…
+            </p>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AI News</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">14시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">스탠퍼드, 멀티모달 추론 벤치마크 'MMR-2026' 공개</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              이미지·텍스트·오디오를 결합한 새로운 평가 프레임워크가…
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">규제·정책</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">Reuters</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">6시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">EU AI Act 2단계 의무 시행 D-30</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              고위험 AI 시스템 사업자에 적합성 평가 절차가 의무화되며…
+            </p>
+            <div class="mt-2"><span class="w-badge">2개 매체 보도</span></div>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes KR</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">11시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">과기정통부, AI 기본법 시행령 입법예고</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">
+              주요 사업자 신고 의무와 영향평가 항목을 구체화한 시행령 초안이…
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">응용</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">VentureBeat</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">9시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">대형 병원, 진단 보조 AI 본격 도입</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">의사 판독 보조 시스템을 1차 진료에 통합한 결과…</p>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">15시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">하나금융, 사내 코딩 어시스턴트 전 직군에 도입</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">생산성 28% 향상 결과를 발표하며…</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">기타</span>
+          <span class="text-xs" style="color:var(--w-muted)">1건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AI Magazine</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">18시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">세계 AI 채용 공고, 전년 대비 41% 증가</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">상위 5개 직무는 ML 엔지니어·프롬프트 엔지니어 순…</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- scenario-fallback: 한 카드 요약 실패            -->
+    <!-- ============================================== -->
+    <div data-scenario="scenario-fallback">
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">모델/기업</span>
+          <span class="text-xs" style="color:var(--w-muted)">3건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">Reuters</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">2시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">OpenAI, GPT-5.4 정식 출시</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">새 모델은 추론 비용을 약 50% 절감…</p>
+            <div class="mt-2"><span class="w-badge">3개 매체 보도</span></div>
+          </article>
+
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">VentureBeat</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">5시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">Anthropic, 엔터프라이즈향 Claude 4.7 발표</h3>
+            <p class="text-xs w-fallback-summary">요약을 가져오지 못했습니다. 원문 링크에서 확인해주세요.</p>
+          </article>
+
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">8시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">네이버, 자체 LLM 4세대 베타 공개</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">한국어 지표에서 GPT-4.5 대비 우위 주장…</p>
+          </article>
+        </div>
+      </section>
+      <p class="text-xs text-center" style="color:var(--w-muted)">··· 나머지 4개 카테고리는 동일 ···</p>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- scenario-normal: 8건, 큰 클러스터 없음           -->
+    <!-- ============================================== -->
+    <div data-scenario="scenario-normal">
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">모델/기업</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">Reuters</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">3시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">OpenAI, GPT-5.4 베타 사용자 후기 분석</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">초기 사용자들의 피드백을 종합하면…</p>
+            <div class="mt-2"><span class="w-badge">2개 매체 보도</span></div>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">7시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">네이버, 자체 LLM 4세대 베타 공개</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">한국어 지표 강조…</p>
+          </article>
+        </div>
+      </section>
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">규제·정책</span>
+          <span class="text-xs" style="color:var(--w-muted)">3건</span>
+        </div>
+        <div class="text-xs px-3 py-2" style="color:var(--w-muted)">··· 카드 3개 ···</div>
+      </section>
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">응용</span>
+          <span class="text-xs" style="color:var(--w-muted)">3건</span>
+        </div>
+        <div class="text-xs px-3 py-2" style="color:var(--w-muted)">··· 카드 3개 ···</div>
+      </section>
+      <p class="text-xs text-center" style="color:var(--w-muted)">총 8건. "연구"와 "기타" 박스는 카드 0건이라 렌더 안 됨.</p>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- scenario-calm: 4건, 평온한 날                  -->
+    <!-- ============================================== -->
+    <div data-scenario="scenario-calm">
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">연구</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">MIT News</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">11시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">MIT, 단백질 접힘 예측 모델 정밀도 개선</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">알파폴드 후속 연구가…</p>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AI News</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">19시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">소형 LLM 경량화 기법 비교 리뷰</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">양자화·증류·프루닝 비교…</p>
+          </article>
+        </div>
+      </section>
+      <section class="w-cat-box mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="w-cat-label">응용</span>
+          <span class="text-xs" style="color:var(--w-muted)">2건</span>
+        </div>
+        <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">VentureBeat</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">14시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">중소 제조사 도입 사례 보고서</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">불량 검출 정확도 향상…</p>
+          </article>
+          <article class="w-card">
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-source-badge">AITimes KR</span>
+              <span class="text-[10px]" style="color:var(--w-muted)">22시간 전</span>
+            </div>
+            <h3 class="text-sm font-bold leading-snug mb-1">교육 앱, 챗봇 튜터 효과 6개월 데이터</h3>
+            <p class="text-xs leading-relaxed" style="color:var(--w-muted)">학습 성취도 변화…</p>
+          </article>
+        </div>
+      </section>
+      <p class="text-xs text-center" style="color:var(--w-muted)">총 4건 (≤ 5) → 🌿 평온한 날 배지</p>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>홈 화면 — 카테고리 박스로 그룹핑된 Top 카드. 페이지 제목 옆 분위기 배지가 그날의 트렌드 강도를 한눈에 보여준다.</p>
+        <ul>
+          <li>트리거: 사용자가 `/`에 직접 진입</li>
+          <li>인터랙션: 카드 본문 클릭 → 기사 상세 / "새로고침" → 페이지 리로드 / 다크 모드 토글 → 즉시 테마 전환, localStorage 저장</li>
+          <li>전환: 다음 06:00 KST cron 후 새 데이터</li>
+          <li>분위기 배지 규칙: 🔥 주목(클러스터≥3) > 🌿 평온(카드≤5) > ☀️ 보통. 우선순위는 주목 > 평온 > 보통.</li>
+          <li>박스/카드 렌더 규칙: 카드 0건 박스는 비노출. 박스 순서·카드 순서는 점수 내림차순.</li>
+          <li>"N개 매체 보도" 배지: N≥2일 때만 표시.</li>
+          <li>요약 fallback: 1회 재시도 후 실패 시 사선 패턴 + 이탤릭 텍스트.</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: 기사 상세 ( /news/[id] )                            -->
+<!-- ============================================================ -->
+<div id="screen-1" class="screen">
+  <div class="screen-content @container max-w-3xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      기사 상세 — /news/[id]
+    </h2>
+
+    <div class="scn-tabs flex flex-wrap gap-1 mb-4">
+      <button onclick="setScenario(1,'scenario-cluster')" class="active">scenario-3 (클러스터, 관련 기사 있음)</button>
+      <button onclick="setScenario(1,'scenario-single')">scenario-3 (단일 기사, 관련 기사 없음)</button>
+    </div>
+
+    <div class="flex items-center justify-between mb-4">
+      <a href="#" onclick="show(0); return false;" class="inline-flex items-center gap-1 text-xs" style="color:var(--w-text)">
+        <i data-lucide="arrow-left" class="w-3 h-3"></i> Top으로 돌아가기
+      </a>
+      <button class="w-icon-btn" onclick="toggleTheme()" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환" style="padding:6px;">
+        <i data-lucide="moon" id="theme-icon-2" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div data-scenario="scenario-cluster" class="active">
+      <header class="mb-4">
+        <div class="flex items-center gap-2 mb-2 flex-wrap">
+          <span class="w-cat-label">모델/기업</span>
+          <span class="w-badge">3개 매체 보도</span>
+        </div>
+        <h1 class="text-xl font-bold leading-snug mb-2">OpenAI, GPT-5.4 정식 출시 — 추론 비용 절반으로</h1>
+        <div class="flex flex-wrap items-center gap-2 text-xs" style="color:var(--w-muted)">
+          <span class="w-source-badge">Reuters</span>
+          <span>발행: 2026-04-30 04:18 KST</span>
+          <span>·</span>
+          <span>수집: 2026-04-30 06:00 KST</span>
+        </div>
+      </header>
+
+      <section class="mb-5">
+        <div class="text-xs font-bold mb-2" style="color:var(--w-muted)">요약 (한국어)</div>
+        <div class="text-sm leading-relaxed p-3" style="background:var(--w-fill); border-radius:8px;">
+          OpenAI는 4월 30일 GPT-5.4를 정식 출시하며 추론 비용을 기존 대비 약 50% 낮추고 컨텍스트 한도를 1M 토큰까지 확장했다고 발표했다.
+          이번 모델은 멀티모달 입력 처리와 함수 호출 정확도에서 크게 개선됐으며, 기존 GPT-5 시리즈 사용자에게는 자동 전환된다.
+          엔터프라이즈 가격은 이전 대비 30~40% 인하됐고, 한국어 추론 품질에서도 자체 벤치마크 기준 12% 향상이 보고됐다.
+        </div>
+      </section>
+
+      <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 mb-5"
+         style="background:var(--w-text); color:var(--w-bg); border-radius:8px; font-size:13px;">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> 원문 보기 (Reuters)
+      </a>
+
+      <section class="mt-2 mb-4">
+        <div class="text-xs font-bold mb-2" style="color:var(--w-muted)">관련 기사 (2건)</div>
+        <ul class="space-y-2">
+          <li class="w-card flex items-center gap-2">
+            <span class="w-source-badge">VentureBeat</span>
+            <a href="#" target="_blank" rel="noopener" class="text-xs flex-1 truncate">OpenAI ships GPT-5.4: half the cost, 1M token context</a>
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+          </li>
+          <li class="w-card flex items-center gap-2">
+            <span class="w-source-badge">AITimes</span>
+            <a href="#" target="_blank" rel="noopener" class="text-xs flex-1 truncate">OpenAI, GPT-5.4 공개 — 추론 비용 절반</a>
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div data-scenario="scenario-single">
+      <header class="mb-4">
+        <div class="flex items-center gap-2 mb-2"><span class="w-cat-label">기타</span></div>
+        <h1 class="text-xl font-bold leading-snug mb-2">세계 AI 관련 채용 공고, 전년 대비 41% 증가</h1>
+        <div class="flex flex-wrap items-center gap-2 text-xs" style="color:var(--w-muted)">
+          <span class="w-source-badge">AI Magazine</span>
+          <span>발행: 2026-04-29 12:00 KST</span><span>·</span><span>수집: 2026-04-30 06:00 KST</span>
+        </div>
+      </header>
+      <section class="mb-5">
+        <div class="text-xs font-bold mb-2" style="color:var(--w-muted)">요약 (한국어)</div>
+        <div class="text-sm leading-relaxed p-3" style="background:var(--w-fill); border-radius:8px;">
+          AI 관련 글로벌 채용 공고가 전년 대비 41% 증가했다.
+          상위 5개 직무는 ML 엔지니어, 프롬프트 엔지니어, 데이터 엔지니어, AI 프로덕트 매니저, AI 윤리 전문가 순이다.
+          평균 연봉도 전년 대비 18% 올랐다.
+        </div>
+      </section>
+      <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 mb-5"
+         style="background:var(--w-text); color:var(--w-bg); border-radius:8px; font-size:13px;">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> 원문 보기 (AI Magazine)
+      </a>
+      <p class="text-xs italic" style="color:var(--w-muted)">· 클러스터 크기 = 1 → "관련 기사" 섹션 미노출 ·</p>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>기사 상세 — 한 카드를 깊이 본다.</p>
+        <ul>
+          <li>트리거: 홈에서 카드 본문 클릭 → /news/[id]</li>
+          <li>인터랙션: "원문 보기" → 새 탭 / "관련 기사" 항목 → 새 탭 / "Top으로 돌아가기" → 홈 / 다크 모드 토글 (홈과 같은 상태 유지)</li>
+          <li>요약 영역: 3~5줄 한국어. fallback이면 "요약을 가져오지 못했습니다" + 원문 보기 강조.</li>
+          <li>관련 기사 섹션: 클러스터 크기 ≥ 2일 때만.</li>
+          <li>다크 모드는 페이지 간 일관 — localStorage가 화면 이동 후에도 같은 테마 유지.</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var currentScreen = 0;
+var screenIds = [];
+
+// 시나리오 → mood 라벨 매핑
+var moodMap = {
+  'scenario-attention': '🔥 주목 필요한 날',
+  'scenario-fallback':  '🔥 주목 필요한 날',
+  'scenario-normal':    '☀️ 보통의 날',
+  'scenario-calm':      '🌿 평온한 날',
+};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('nav-' + id).classList.add('active');
+  currentScreen = screenIds.indexOf(id);
+  lucide.createIcons();
+}
+
+function setViewport(mode) {
+  document.body.classList.remove('viewport-mobile', 'viewport-desktop');
+  document.body.classList.add('viewport-' + mode);
+  document.querySelectorAll('.vp-toggle button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('vp-' + mode).classList.add('active');
+}
+
+function setScenario(screenId, scenarioName) {
+  var screen = document.getElementById('screen-' + screenId);
+  if (!screen) return;
+  screen.querySelectorAll('[data-scenario]').forEach(function(el) {
+    if (el.getAttribute('data-scenario') === scenarioName) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  screen.querySelectorAll('.scn-tabs button').forEach(function(b) { b.classList.remove('active'); });
+  screen.querySelectorAll('.scn-tabs button').forEach(function(b) {
+    var oc = b.getAttribute('onclick') || '';
+    if (oc.indexOf("'" + scenarioName + "'") >= 0) b.classList.add('active');
+  });
+  // mood badge 업데이트 (홈 화면에서만)
+  if (screenId === 0) {
+    var badge = document.getElementById('mood-badge');
+    if (badge && moodMap[scenarioName]) badge.textContent = moodMap[scenarioName];
+  }
+  lucide.createIcons();
+}
+
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try { localStorage.setItem('w-theme', next); } catch (e) {}
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  ['theme-icon', 'theme-icon-2'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+  });
+  lucide.createIcons();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) {
+    screenIds.push(parseInt(b.id.replace('nav-', '')));
+  });
+  // restore theme
+  var saved = 'light';
+  try { saved = localStorage.getItem('w-theme') || 'light'; } catch (e) {}
+  applyTheme(saved);
+  var first = document.querySelector('nav button[id^="nav-"]');
+  if (first) first.click();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>
