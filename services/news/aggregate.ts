@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import type {
   Article,
   ArticleEnriched,
@@ -19,6 +20,8 @@ import { categorizeArticles } from "@/services/categorize";
 
 const MAX_CATEGORIZE_INPUT = 60; // cap LLM input cost on busy days
 const SUMMARY_CONCURRENCY = 3;
+export const NEWS_CACHE_TAG = "news";
+const CACHE_TTL_SECONDS = 24 * 60 * 60;
 
 export interface DigestSnapshot {
   generatedAt: string;
@@ -31,7 +34,7 @@ interface InternalArticle extends Article {
   category: Category;
 }
 
-export async function getDigest(): Promise<DigestSnapshot> {
+export async function buildDigest(): Promise<DigestSnapshot> {
   const now = new Date();
   const cutoff = now.getTime() - RECENCY_WINDOW_HOURS * 60 * 60 * 1000;
 
@@ -142,6 +145,11 @@ function toEnrichedPlaceholder(article: Article, category: Category): ArticleEnr
     summaryStatus: status,
   };
 }
+
+export const getDigest = unstable_cache(buildDigest, ["ai-news-digest"], {
+  tags: [NEWS_CACHE_TAG],
+  revalidate: CACHE_TTL_SECONDS,
+});
 
 export function findArticleById(
   snapshot: DigestSnapshot,
