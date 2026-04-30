@@ -38,6 +38,10 @@ export function readAzureConfig(env: NodeJS.ProcessEnv = process.env): AzureConf
   };
 }
 
+// Hard cap a single Azure call so unreachable / slow endpoints can't stall
+// the page render. The summarize layer adds 1 retry on top of this.
+const REQUEST_TIMEOUT_MS = 15_000;
+
 export function getAzureClient(env: NodeJS.ProcessEnv = process.env): AzureOpenAI {
   if (cachedClient) return cachedClient;
   const cfg = readAzureConfig(env);
@@ -45,6 +49,8 @@ export function getAzureClient(env: NodeJS.ProcessEnv = process.env): AzureOpenA
     apiKey: cfg.apiKey,
     endpoint: cfg.endpoint,
     apiVersion: cfg.apiVersion,
+    timeout: REQUEST_TIMEOUT_MS,
+    maxRetries: 0,
   });
   return cachedClient;
 }

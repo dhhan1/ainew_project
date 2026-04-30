@@ -73,3 +73,13 @@ applied: discarded
 **상황**: code-reviewer Important. `types/news.ts`의 `DigestData`가 plan에 정의됐으나 실 코드는 `DigestSnapshot`(services 내부) 사용. dead type 발생.
 **판단**: `DigestData` 제거. 단일 진실 출처를 `services/news/aggregate.ts`의 `DigestSnapshot`로 통일.
 **다시 마주칠 가능성**: 낮음 — feature 특유의 우연. plan 단계에서 types와 service 인터페이스가 어긋난 결과.
+
+---
+category: tooling
+applied: not-yet
+---
+## OpenAI/Azure SDK 클라이언트는 명시 timeout을 박아둔다
+
+**상황**: 로컬 dev 검증 시 사용자 네트워크가 Azure endpoint에 도달하지 못해 모든 summarize/categorize 호출이 timeout. 기본 timeout이 길어 페이지 렌더가 3분 이상 걸렸다(스펙은 통과 — fallback 경로가 정상 작동).
+**판단**: `AzureOpenAI` 클라이언트에 `timeout: 15000` + `maxRetries: 0` 명시. summarize 레이어의 자체 1회 재시도로 충분. 이렇게 하면 Azure가 죽어도 페이지가 합리적 시간 안에 fallback으로 떨어진다.
+**다시 마주칠 가능성**: 높음 — 외부 LLM API에 의존하는 모든 server-rendered 페이지에 동일 문제. 룰 후보지만 SDK별 세팅 키가 달라 일반화 어려움. 우선 learnings에만 메모.
