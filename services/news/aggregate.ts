@@ -4,6 +4,7 @@ import type {
   Category,
   CategoryGroup,
   Cluster,
+  Mood,
   SummaryStatus,
 } from "@/types/news";
 import { fetchAllSources } from "@/lib/rss";
@@ -12,6 +13,7 @@ import { mapWithConcurrency } from "@/lib/concurrency";
 import { clusterArticles } from "@/lib/cluster";
 import { RECENCY_WINDOW_HOURS, SOURCES, TOP_N } from "@/config/sources";
 import { CATEGORIES } from "@/types/news";
+import { computeMood } from "@/config/mood";
 import { summarizeKo } from "@/services/summarize";
 import { categorizeArticles } from "@/services/categorize";
 
@@ -22,6 +24,7 @@ export interface DigestSnapshot {
   generatedAt: string;
   groups: CategoryGroup[];
   failedSources: string[];
+  mood: Mood;
 }
 
 interface InternalArticle extends Article {
@@ -112,6 +115,7 @@ export async function getDigest(): Promise<DigestSnapshot> {
     generatedAt: now.toISOString(),
     groups,
     failedSources,
+    mood: computeMood(groups),
   };
 }
 

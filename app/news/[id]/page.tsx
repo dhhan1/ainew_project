@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { findArticleById, getDigest } from "@/services/news/aggregate";
 import { RelatedArticles } from "@/components/related-articles";
 import { ClusterBadge } from "@/components/cluster-badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { SourceBadge } from "@/components/source-badge";
 import { formatKst } from "@/lib/format";
@@ -27,13 +28,14 @@ export default async function DetailPage({ params }: DetailPageProps) {
 
   return (
     <main className="mx-auto max-w-3xl p-6">
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-3 w-3" /> Top으로 돌아가기
         </Link>
+        <ThemeToggle />
       </div>
 
       <header className="mb-5">

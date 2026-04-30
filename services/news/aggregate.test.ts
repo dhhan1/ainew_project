@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { findArticleById } from "./aggregate";
+import type { DigestSnapshot } from "./aggregate";
 import type {
   ArticleEnriched,
   Cluster,
   CategoryGroup,
-  DigestSnapshot,
 } from "@/types/news";
 
 function art(id: string): ArticleEnriched {
@@ -23,7 +23,12 @@ function art(id: string): ArticleEnriched {
 }
 
 function snapshot(groups: CategoryGroup[]): DigestSnapshot {
-  return { generatedAt: new Date().toISOString(), groups, failedSources: [] };
+  return {
+    generatedAt: new Date().toISOString(),
+    groups,
+    failedSources: [],
+    mood: "normal",
+  };
 }
 
 describe("findArticleById", () => {
